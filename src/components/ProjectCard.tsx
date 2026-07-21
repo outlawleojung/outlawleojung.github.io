@@ -79,6 +79,22 @@ export function ProjectCard({ project }: { project: Project }) {
         </ul>
       </div>
 
+      {project.planned && project.planned.length > 0 && (
+        <div className="mt-6">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
+            설계 · 검토 중
+          </p>
+          <ul className="space-y-1.5 text-sm leading-relaxed sm:text-[15px]">
+            {project.planned.map((r) => (
+              <li key={r} className="flex gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full border border-[var(--muted)] bg-transparent" />
+                <span className="text-[var(--muted)]">{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {project.archImage && (
         <ArchToggle
           label={project.archImage.label}

@@ -9,6 +9,7 @@ export type Project = {
   gallery?: string[];
   youtube?: string;
   responsibilities: string[];
+  planned?: string[];
   archImage?: { label: string; src: string };
   archImages?: Array<{ label: string; src: string }>;
   stack: string[];
@@ -54,7 +55,7 @@ export const companies: Company[] = [
       {
         name: "PHP 레거시 → NestJS MSA 마이그레이션",
         tagline:
-          "14년+ 그누보드·영카트 기반 쇼핑·커뮤니티 통합 서비스를 NestJS + Next.js + gRPC MSA로 무중단 단계 전환 — 통합 인증 서버 신설, 서비스별 Gateway, DB per Service",
+          "14년+ 그누보드·영카트 기반 쇼핑·커뮤니티 통합 서비스를 NestJS + Next.js + gRPC MSA로 무중단 단계 전환 (진행 중) — 통합 인증 서버 신설, 서비스별 Gateway, DB per Service 구조 설계",
         period: "2026.05 ~ 재직 중",
         heroImage: "/images/healingsam/01_main.png",
         responsibilities: [
@@ -62,22 +63,24 @@ export const companies: Company[] = [
           "PHP(그누보드/영카트) 기반 쇼핑·커뮤니티 서비스 유지보수 및 신규 기능 개발",
           "Java Spring Boot + React 기반 관리자 페이지 유지보수 및 신규 기능 개발",
           "3개 서비스 전체를 NestJS + Next.js 기반 MSA로 마이그레이션 (단독 진행)",
-          "STEP 0 → 1 → 2: Legacy 단일 서버 → 인프라 분리(Azure VM/DB/Blob) → MSA 리뉴얼(AKS + Managed) 단계적 무중단 전환 전략 수립",
-          "통합 인증 서버 신설로 두 서비스 로그인·세션 통합",
-          "쇼핑몰(상품·주문·결제·배송) · 커뮤니티(게시글·댓글·알림) 도메인 세분화, 서비스별 Gateway + 내부 gRPC MSA 구조 설계",
-          "DB per Service — 각 마이크로서비스마다 독립 Azure DB for MySQL 인스턴스, 서비스별 Blob Storage 분리",
-          "MSA 데이터 정합성 전략: Outbox Pattern (이벤트 원자성), Saga (분산 트랜잭션 + 보상), Idempotency Key, Reconciliation Batch, Contract Test",
-          "Safety Net: Soft Delete + Tombstone, Dead Letter Queue, Reconciliation Job, Redis Idempotency Store",
           "TypeORM 기반 데이터 모델링 및 DB 재설계 (레거시 → 정규화 + 도메인 분리)",
-          "NestJS Monorepo로 apps/libs 통합 관리, 서비스별 독립 빌드·배포",
+          "NestJS Monorepo로 apps/libs 통합 관리 구조 도입",
+        ],
+        planned: [
+          "STEP 0 → 1 → 2 로드맵 수립: Legacy 단일 서버 → 인프라 분리(Azure VM/DB/Blob) → MSA 리뉴얼(AKS + Managed) 단계적 무중단 전환",
+          "통합 인증 서버 신설로 두 서비스 로그인·세션 통합 (설계)",
+          "쇼핑몰(상품·주문·결제·배송) · 커뮤니티(게시글·댓글·알림) 도메인 세분화, 서비스별 Gateway + 내부 gRPC MSA 구조 설계",
+          "DB per Service — 각 마이크로서비스마다 독립 Azure DB for MySQL 인스턴스, 서비스별 Blob Storage 분리 (설계)",
+          "MSA 데이터 정합성 확보 방안 검토: Outbox Pattern · Saga · Idempotency Key · Reconciliation Batch · Contract Test",
+          "장애 안전망 검토: Soft Delete + Tombstone · Dead Letter Queue · Reconciliation Job · Redis Idempotency Store",
         ],
         archImages: [
           {
-            label: "MSA 아키텍처 · 완전 독립 2개 서비스 + 통합 인증",
+            label: "MSA 아키텍처 설계안 · 완전 독립 2개 서비스 + 통합 인증",
             src: "/images/healingsam/02_architecture.png",
           },
           {
-            label: "데이터 전략 · Outbox · Saga · Idempotency · Reconciliation",
+            label: "데이터 정합성 전략 (설계 · 검토) · Outbox · Saga · Idempotency · Reconciliation",
             src: "/images/healingsam/03_data_strategy.png",
           },
         ],
