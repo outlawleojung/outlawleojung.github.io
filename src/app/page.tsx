@@ -24,14 +24,22 @@ export default function Home() {
             © {new Date().getFullYear()} {profile.name}. Built with Next.js ·
             Deployed on GitHub Pages via Actions.
           </p>
-          <a
-            href="https://github.com/outlawleojung/outlawleojung.github.io"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-[var(--accent)]"
-          >
-            source
-          </a>
+          <div className="flex gap-4">
+            <a
+              href="/about/"
+              className="hover:text-[var(--accent)]"
+            >
+              자기소개서
+            </a>
+            <a
+              href="https://github.com/outlawleojung/outlawleojung.github.io"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[var(--accent)]"
+            >
+              source
+            </a>
+          </div>
         </div>
       </footer>
     </main>
