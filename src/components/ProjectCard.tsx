@@ -25,13 +25,43 @@ export function ProjectCard({ project }: { project: Project }) {
       </header>
 
       {project.heroImage && (
-        <div className="my-6 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
+        <div className="my-6 flex justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={project.heroImage}
             alt={project.name}
-            className="w-full"
+            className="max-h-[720px] w-auto max-w-full object-contain"
           />
+        </div>
+      )}
+
+      {project.youtube && (
+        <div className="my-6 aspect-video w-full overflow-hidden rounded-lg border border-[var(--border)] bg-black">
+          <iframe
+            src={`https://www.youtube.com/embed/${project.youtube}`}
+            title={project.name}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="h-full w-full"
+          />
+        </div>
+      )}
+
+      {project.gallery && project.gallery.length > 0 && (
+        <div className="my-6 grid gap-3 sm:grid-cols-2">
+          {project.gallery.map((src) => (
+            <div
+              key={src}
+              className="flex justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={project.name}
+                className="max-h-[520px] w-auto max-w-full object-contain"
+              />
+            </div>
+          ))}
         </div>
       )}
 

@@ -6,6 +6,8 @@ export type Project = {
   github?: { label: string; href: string; note?: string };
   description?: string;
   heroImage?: string;
+  gallery?: string[];
+  youtube?: string;
   responsibilities: string[];
   archImage?: { label: string; src: string };
   stack: string[];
@@ -46,6 +48,7 @@ export const skills = {
 export const companies: Company[] = [
   {
     name: "(주)애니챗",
+    logo: "/logos/anychat.png",
     projects: [
       {
         name: "애니챗 · 실시간 AI 번역 채팅",
@@ -57,7 +60,8 @@ export const companies: Company[] = [
           href: "https://github.com/outlawleojung/NestJS-gRPC-Chat",
           note: "아키텍처 참고용 보일러플레이트",
         },
-        heroImage: "/images/anichat/01_main.png",
+        heroImage: "/images/anichat/arch.png",
+        gallery: ["/images/anichat/hero.png"],
         responsibilities: [
           "NestJS 백엔드 서버 리팩토링, monorepo 적용으로 프로젝트와 lib 분리",
           "데이터베이스 정규화 — 단일 테이블 구조를 정규화하여 데이터 무결성·확장성 개선",
@@ -70,10 +74,6 @@ export const companies: Company[] = [
           "GitHub Actions로 Azure Kubernetes 배포",
           "React Native → Flutter 클라이언트 마이그레이션 및 앱 런칭",
         ],
-        archImage: {
-          label: "실시간 채팅 분산 처리 아키텍처",
-          src: "/images/anichat/04_realtime.png",
-        },
         stack: [
           "NestJS",
           "TypeORM",
@@ -93,6 +93,7 @@ export const companies: Company[] = [
         name: "AceBiz · B2B 실시간 번역 채팅 웹서비스 (유지보수)",
         tagline: "B2B 실시간 번역 채팅 웹서비스 마이그레이션 및 유지보수",
         period: "2024.06 ~",
+        heroImage: "/images/acebiz/hero.png",
         responsibilities: [
           "Express 서버 → NestJS monorepo(관리자 페이지 포함) 전환",
           "전체 테이블 재설계 (정규화)",
@@ -117,13 +118,15 @@ export const companies: Company[] = [
   },
   {
     name: "(주)한컴프론티스",
+    logo: "/logos/hancom.png",
     projects: [
       {
         name: "아즈메타 · 메타버스 플랫폼",
         tagline:
           "생활 밀착형 버츄얼 커넥트 월드 서비스 — 온라인 화상 회의·강의·의료 상담·게임·앱 내 상품 판매를 아우르는 통합 메타버스 플랫폼",
         period: "2022.11 ~ 2023.12 (1년 1개월 / 30명) · 서비스 종료",
-        heroImage: "/images/metaverse/01_main.png",
+        heroImage: "/images/metaverse/hero.png",
+        youtube: "_HToOiWvjTk",
         responsibilities: [
           "MSA 백엔드 서버 아키텍처 설계",
           "데이터베이스 모델링 (MariaDB + MongoDB 하이브리드)",
@@ -136,7 +139,7 @@ export const companies: Company[] = [
         ],
         archImage: {
           label: "분산 Socket 아키텍처",
-          src: "/images/metaverse/04_socket_arch.png",
+          src: "/images/metaverse/socket_arch.png",
         },
         stack: [
           "NestJS",
@@ -160,6 +163,7 @@ export const companies: Company[] = [
         tagline:
           "코드게이트 해킹방어대회를 메타버스 앱과 오프라인에서 동시에 진행하기 위한 서비스",
         period: "2022.03 ~ 2022.10 (7개월 / 30명) · 서비스 종료",
+        heroImage: "/images/codegate/hero.png",
         responsibilities: [
           "MSA 백엔드 서버 아키텍처 설계",
           "데이터베이스 모델링",
@@ -173,6 +177,7 @@ export const companies: Company[] = [
   },
   {
     name: "더에이아이랩(주)",
+    logo: "/logos/ailab.png",
     projects: [
       {
         name: "코딩엑스 · 코딩교육 플랫폼 백오피스",
@@ -193,12 +198,15 @@ export const companies: Company[] = [
   },
   {
     name: "(주)문블락",
+    logo: "/logos/moonblock.png",
     projects: [
       {
         name: "진연희몽상",
         tagline:
           "일본 미연시 IP 연희몽상을 활용한 DMM 성인 RPG 게임. 국내 연희삼국 for Kakao를 기반으로 일본어·성인 컨텐츠 추가",
         period: "2014.10 ~ 2016.11 (2년 / 30명)",
+        heroImage: "/images/moonblock/jinyeonhee_ssr.png",
+        gallery: ["/images/moonblock/jinyeonhee_gacha.png"],
         responsibilities: [
           "cocos2d-x 클라이언트 개발 (전투를 제외한 전반적인 기능)",
           "MSSQL 데이터베이스 모델링",
@@ -219,6 +227,8 @@ export const companies: Company[] = [
         name: "연희삼국 for Kakao",
         tagline: "일본 미연시 IP 연희몽상을 활용한 RPG 게임. Kakao 게임 런칭",
         period: "2014.01 ~ 2015.10 (1년 9개월 / 개발 5 · 기획 3 · 그래픽 4)",
+        heroImage: "/images/moonblock/yeonheesamguk_grandopen.png",
+        youtube: "szv3M_E_YQ4",
         responsibilities: [
           "cocos2d-x 클라이언트 개발 (전투를 제외한 전반적인 기능)",
           "MSSQL 데이터베이스 모델링",
@@ -239,6 +249,8 @@ export const companies: Company[] = [
         name: "연희몽상",
         tagline: "일본 미연시 IP 연희몽상을 활용한 TCG 게임. Kakao 게임 런칭",
         period: "2013.02 ~ 2014.01 (1년 / 개발 3 · 기획 2 · 그래픽 2)",
+        heroImage: "/images/moonblock/yeonheemongsang.png",
+        youtube: "fFv6FAir0XE",
         responsibilities: [
           "컨텐츠 기반 기능 개발 (전체 아키텍처 구조 준수)",
           "cocos2d-x 클라이언트 개발",
