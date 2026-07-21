@@ -48,7 +48,8 @@ export const skills = {
 
 export const companies: Company[] = [
   {
-    name: "힐링샘",
+    name: "(주)힐링샘",
+    logo: "/logos/healingsam.png",
     projects: [
       {
         name: "PHP 레거시 → NestJS MSA 마이그레이션",
