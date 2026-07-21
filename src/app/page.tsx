@@ -8,8 +8,8 @@ export default function Home() {
     <main>
       <Hero />
       <Skills />
-      <div id="projects" className="border-b border-[var(--border)] pb-8">
-        <div className="mx-auto max-w-4xl px-6 pt-16">
+      <div id="projects" className="border-b border-[var(--border)] pb-8 print:pb-2">
+        <div className="mx-auto max-w-4xl px-6 pt-16 print:pt-6">
           <h2 className="font-mono text-xs tracking-widest text-[var(--muted)]">
             PROJECTS
           </h2>

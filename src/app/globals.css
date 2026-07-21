@@ -66,4 +66,27 @@ body {
     background: #ffffff !important;
     color: #0a0a0a !important;
   }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  article,
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  img,
+  iframe {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }

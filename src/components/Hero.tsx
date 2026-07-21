@@ -3,7 +3,7 @@ import { profile } from "@/lib/portfolio";
 export function Hero() {
   return (
     <section className="border-b border-[var(--border)]">
-      <div className="mx-auto max-w-4xl px-6 py-24 sm:py-32">
+      <div className="mx-auto max-w-4xl px-6 py-24 print:py-6 sm:py-32">
         <p className="font-mono text-xs tracking-widest text-[var(--muted)]">
           PORTFOLIO · {new Date().getFullYear()}
         </p>
@@ -35,6 +35,10 @@ export function Hero() {
             <span className="font-mono text-[var(--muted)]">github</span>
             outlawleojung
           </a>
+          <span className="hidden items-center gap-2 print:inline-flex">
+            <span className="font-mono text-[var(--muted)]">web</span>
+            outlawleojung.github.io
+          </span>
         </div>
       </div>
     </section>

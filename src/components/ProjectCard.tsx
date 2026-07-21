@@ -36,14 +36,29 @@ export function ProjectCard({ project }: { project: Project }) {
       )}
 
       {project.youtube && (
-        <div className="my-6 aspect-video w-full overflow-hidden rounded-lg border border-[var(--border)] bg-black">
-          <iframe
-            src={`https://www.youtube.com/embed/${project.youtube}`}
-            title={project.name}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="h-full w-full"
-          />
+        <div className="my-6">
+          <div className="aspect-video w-full overflow-hidden rounded-lg border border-[var(--border)] bg-black print:hidden">
+            <iframe
+              src={`https://www.youtube.com/embed/${project.youtube}`}
+              title={project.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="h-full w-full"
+            />
+          </div>
+          <div className="hidden print:block">
+            <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://img.youtube.com/vi/${project.youtube}/hqdefault.jpg`}
+                alt={`${project.name} 영상 썸네일`}
+                className="w-full"
+              />
+            </div>
+            <p className="mt-2 text-center font-mono text-xs text-[var(--muted)]">
+              ▶ 영상: youtu.be/{project.youtube}
+            </p>
+          </div>
         </div>
       )}
 
