@@ -33,9 +33,6 @@ const sections: Array<{ heading: string; body: string }> = [
   },
 ];
 
-const closing =
-  "일부 재직처의 경영악화로 인한 비자발적 퇴사가 있었으며, 상세 경위는 면접에서 말씀드리겠습니다.";
-
 export default function AboutPage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16 print:px-6 print:py-4">
@@ -75,10 +72,6 @@ export default function AboutPage() {
           </section>
         ))}
       </div>
-
-      <p className="mt-10 text-sm leading-relaxed text-[var(--muted)] print:mt-6 print:text-[10px]">
-        {closing}
-      </p>
 
       <footer className="mt-12 border-t border-[var(--border)] pt-6 text-xs text-[var(--muted)] print:mt-6 print:pt-3 print:text-[9px]">
         <p>
