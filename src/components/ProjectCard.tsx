@@ -86,6 +86,10 @@ export function ProjectCard({ project }: { project: Project }) {
         />
       )}
 
+      {project.archImages?.map((a) => (
+        <ArchToggle key={a.src} label={a.label} src={a.src} />
+      ))}
+
       <div className="mt-6">
         <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
           사용 기술
