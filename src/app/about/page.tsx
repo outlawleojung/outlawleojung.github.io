@@ -23,8 +23,8 @@ const sections: Array<{ heading: string; body: string }> = [
       "이후 애니챗에서는 앱 서비스를 NestJS + PostgreSQL + Flutter로 단독 리뉴얼하여 런칭했으며, " +
       "서비스 간 gRPC 통신과 Gateway 패턴을 도입했습니다. 현재 힐링샘에서는 PHP·Spring Boot로 " +
       "운영되던 14년+ 레거시 3개 서비스를 NestJS + Next.js + gRPC MSA로 무중단 전환하는 프로젝트를 " +
-      "단독으로 진행 중이며, Outbox · Saga · Idempotency Key 등 데이터 정합성 패턴을 실전에 " +
-      "적용하고 있습니다.",
+      "단독으로 진행 중이며, DB per Service 구조에서의 데이터 정합성 확보 방안(Outbox · Saga · " +
+      "Idempotency 등)을 설계 단계에서 함께 검토하고 있습니다.",
   },
   {
     heading: "2. 클라우드 및 DevOps",
