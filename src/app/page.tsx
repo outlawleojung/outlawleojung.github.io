@@ -21,8 +21,8 @@ export default function Home() {
       <footer className="mx-auto max-w-4xl px-6 py-12 text-sm text-[var(--muted)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p>
-            © {new Date().getFullYear()} {profile.name}. Built with Next.js ·
-            Deployed on GitHub Pages via Actions.
+            © {new Date().getFullYear()} {profile.name}. Built with Next.js on
+            GitHub Pages.
           </p>
           <div className="flex gap-4">
             <a

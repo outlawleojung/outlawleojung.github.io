@@ -15,11 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "정민영 · 시니어 백엔드 엔지니어 / 테크 리드",
   description:
-    "13년차 백엔드 엔지니어 · 팀 리드. NestJS · gRPC · Socket.IO · NATS · Redis · Kubernetes 기반 실시간 시스템과 MSA 설계.",
+    "13년차 백엔드 엔지니어 · 팀 리드. 레거시 현대화 · MSA 설계 · NestJS · gRPC · Socket.IO · NATS · Redis · Kubernetes.",
   openGraph: {
     title: "정민영 · 시니어 백엔드 엔지니어 / 테크 리드",
     description:
-      "NestJS 기반 백엔드 설계, Azure 클라우드 인프라, 실시간 채팅·MSA 아키텍처.",
+      "레거시 현대화, 백엔드 아키텍처 재설계, 클라우드 인프라, 실시간 채팅·MSA 아키텍처.",
     type: "website",
   },
 };
