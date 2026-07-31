@@ -32,15 +32,16 @@ export const profile = {
 };
 
 export const skills = {
-  strong: ["TypeScript", "NestJS", "gRPC", "Socket.IO", "MySQL", "Redis", "NATS"],
+  strong: ["TypeScript", "NestJS", "gRPC", "Socket.IO", "MySQL", "PostgreSQL", "Redis", "NATS"],
   knowledgeable: [
+    "Python",
+    "FastAPI",
     "C++",
     "C#",
     "Dart",
     "Next.js",
     "Flutter",
     "MongoDB",
-    "PostgreSQL",
     "MSSQL",
     "Kubernetes",
     "Docker",
@@ -97,6 +98,43 @@ export const companies: Company[] = [
           "GitHub Actions",
           "Java Spring Boot (legacy)",
           "PHP (legacy)",
+        ],
+      },
+      {
+        name: "FastAPI + RAG + LLM 기반 고객 챗봇",
+        tagline:
+          "기존 Q&A · 문의 게시판 데이터를 벡터화(Voyage AI + pgvector)하여 Claude API로 자동 답변을 생성하는 RAG 챗봇 시스템 (진행 중)",
+        period: "2026.05 ~ 재직 중 · 개발팀 / 차장",
+        heroImage: "/images/healingsam/chatbot/01_main.png",
+        responsibilities: [
+          "FastAPI 비동기 서버로 채팅 API 구성 — 외부 LLM · 벡터DB 호출을 async 로 오케스트레이션",
+          "Voyage AI (voyage-3) 임베딩 모델로 문서/쿼리 벡터화 — input_type 을 document/query 로 구분해 검색 품질 최적화",
+          "PostgreSQL + pgvector 로 벡터 저장 · 검색 (별도 벡터DB 없이 기존 Postgres 활용) — IVFFlat 인덱스로 코사인 유사도 검색",
+          "Data Ingestion Batch 파이프라인: 원본 Q&A → 자연 청킹 → Voyage 임베딩 → pgvector upsert",
+          "Query 파이프라인: Embed → Retrieve(Top-K) → Augment(context + question) → Claude API Generate",
+          "Hallucination 억제: system 프롬프트로 context 밖 답변 금지 + 관련 문서 없을 시 상담원 연결 유도",
+        ],
+        planned: [
+          "인제스션 스케줄러 자동화: 신규 문의 등록·수정 시 트리거 또는 크론으로 embedding 자동 갱신",
+          "답변 품질 지표 수집: retrieved score · 답변 만족도 로그 → 프롬프트/청킹 튜닝 근거 확보",
+          "관리자 대시보드에서 자주 묻는 질문 · 미해결 문의 상위 노출",
+        ],
+        archImages: [
+          {
+            label: "RAG 파이프라인 상세 (Data Ingestion + Query)",
+            src: "/images/healingsam/chatbot/02_architecture.png",
+          },
+        ],
+        stack: [
+          "Python",
+          "FastAPI",
+          "async",
+          "Anthropic Claude",
+          "Voyage AI",
+          "PostgreSQL",
+          "pgvector",
+          "SQLAlchemy",
+          "RAG",
         ],
       },
     ],
