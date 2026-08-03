@@ -10,8 +10,9 @@ export type Project = {
   youtube?: string;
   responsibilities: string[];
   planned?: string[];
-  archImage?: { label: string; src: string };
-  archImages?: Array<{ label: string; src: string }>;
+  archImage?: { label: string; src: string; defaultOpen?: boolean };
+  archImages?: Array<{ label: string; src: string; defaultOpen?: boolean }>;
+  techDocs?: Array<{ label: string; href: string; note?: string }>;
   stack: string[];
 };
 
@@ -54,53 +55,6 @@ export const companies: Company[] = [
     logo: "/logos/healingsam.png",
     projects: [
       {
-        name: "레거시 3종 → NestJS + Next.js + gRPC MSA 전환",
-        tagline:
-          "쇼핑몰(천사몰) · 커뮤니티(천사방) · 보건일지 3개 레거시 서비스를 NestJS + Next.js + gRPC MSA 단일 구조로 전환 (레거시 전환 목적 계약, 진행 중)",
-        period: "2026.05 ~ 재직 중 · 개발팀 / 차장",
-        heroImage: "/images/healingsam/01_main.png",
-        responsibilities: [
-          "자사 서비스 3종(쇼핑몰 · 커뮤니티 · 보건일지) 풀스택 개발·운영 총괄",
-          "PHP(그누보드/영카트) 기반 쇼핑몰(천사몰) · 커뮤니티(천사방) 서비스 유지보수 및 신규 기능 개발",
-          "Java Spring Boot + React + MySQL 기반 보건일지 서비스 DB 재설계 진행 중 — 스키마 정규화, 테이블 구조 재설계, 인덱스/쿼리 개선",
-          "단일 물리 서버 환경 → 클라우드 마이그레이션 및 서비스 분리 계획 수립",
-          "상기 3개 서비스의 NestJS + Next.js + gRPC MSA 기반 전환 아키텍처 설계",
-        ],
-        planned: [
-          "STEP 0 → 1 → 2 로드맵: Legacy 단일 서버 → 인프라 분리(Azure VM/DB/Blob) → MSA 리뉴얼(AKS + Managed) 단계적 무중단 전환",
-          "통합 인증 서버 신설로 3개 서비스 로그인·세션 통합",
-          "쇼핑몰(상품·주문·결제·배송) · 커뮤니티(게시글·댓글·알림) · 보건일지 도메인 세분화, 서비스별 Gateway + 내부 gRPC MSA 구조",
-          "DB per Service — 각 마이크로서비스마다 독립 Azure DB for MySQL 인스턴스, 서비스별 Blob Storage 분리",
-          "MSA 데이터 정합성 확보 방안 검토: Outbox Pattern · Saga · Idempotency Key · Reconciliation Batch · Contract Test",
-          "장애 안전망 검토: Soft Delete + Tombstone · Dead Letter Queue · Reconciliation Job · Redis Idempotency Store",
-        ],
-        archImages: [
-          {
-            label: "MSA 아키텍처 설계안 · 완전 독립 2개 서비스 + 통합 인증",
-            src: "/images/healingsam/02_architecture.png",
-          },
-          {
-            label: "데이터 정합성 전략 (설계 · 검토) · Outbox · Saga · Idempotency · Reconciliation",
-            src: "/images/healingsam/03_data_strategy.png",
-          },
-        ],
-        stack: [
-          "NestJS",
-          "Next.js",
-          "gRPC",
-          "TypeORM",
-          "Monorepo",
-          "Azure AKS",
-          "Azure DB for MySQL",
-          "Azure Blob Storage",
-          "NATS",
-          "Redis",
-          "GitHub Actions",
-          "Java Spring Boot (legacy)",
-          "PHP (legacy)",
-        ],
-      },
-      {
         name: "FastAPI + RAG + LLM 기반 고객 챗봇",
         tagline:
           "기존 Q&A · 문의 게시판 데이터를 벡터화(Voyage AI + pgvector)하여 Claude API로 자동 답변을 생성하는 RAG 챗봇 시스템 (진행 중)",
@@ -135,6 +89,55 @@ export const companies: Company[] = [
           "pgvector",
           "SQLAlchemy",
           "RAG",
+        ],
+      },
+      {
+        name: "레거시 3종 → NestJS + Next.js + gRPC MSA 전환",
+        tagline:
+          "쇼핑몰(천사몰) · 커뮤니티(천사방) · 보건일지 3개 레거시 서비스를 NestJS + Next.js + gRPC MSA 단일 구조로 전환 (레거시 전환 목적 계약, 진행 중)",
+        period: "2026.05 ~ 재직 중 · 개발팀 / 차장",
+        heroImage: "/images/healingsam/01_main.png",
+        responsibilities: [
+          "자사 서비스 3종(쇼핑몰 · 커뮤니티 · 보건일지) 풀스택 개발·운영 총괄",
+          "PHP(그누보드/영카트) 기반 쇼핑몰(천사몰) · 커뮤니티(천사방) 서비스 유지보수 및 신규 기능 개발",
+          "Java Spring Boot + React + MySQL 기반 보건일지 서비스 DB 재설계 진행 중 — 스키마 정규화, 테이블 구조 재설계, 인덱스/쿼리 개선",
+          "단일 물리 서버 환경 → 클라우드 마이그레이션 및 서비스 분리 계획 수립",
+          "상기 3개 서비스의 NestJS + Next.js + gRPC MSA 기반 전환 아키텍처 설계",
+        ],
+        planned: [
+          "STEP 0 → 1 → 2 로드맵: Legacy 단일 서버 → 인프라 분리(Azure VM/DB/Blob) → MSA 리뉴얼(AKS + Managed) 단계적 무중단 전환",
+          "통합 인증 서버 신설로 3개 서비스 로그인·세션 통합",
+          "쇼핑몰(상품·주문·결제·배송) · 커뮤니티(게시글·댓글·알림) · 보건일지 도메인 세분화, 서비스별 Gateway + 내부 gRPC MSA 구조",
+          "DB per Service — 각 마이크로서비스마다 독립 Azure DB for MySQL 인스턴스, 서비스별 Blob Storage 분리",
+          "MSA 데이터 정합성 확보 방안 검토: Outbox Pattern · Saga · Idempotency Key · Reconciliation Batch · Contract Test",
+          "장애 안전망 검토: Soft Delete + Tombstone · Dead Letter Queue · Reconciliation Job · Redis Idempotency Store",
+        ],
+        archImages: [
+          {
+            label: "MSA 아키텍처 설계안 · 완전 독립 2개 서비스 + 통합 인증",
+            src: "/images/healingsam/02_architecture.png",
+            defaultOpen: true,
+          },
+          {
+            label: "데이터 정합성 전략 (설계 · 검토) · Outbox · Saga · Idempotency · Reconciliation",
+            src: "/images/healingsam/03_data_strategy.png",
+            defaultOpen: true,
+          },
+        ],
+        stack: [
+          "NestJS",
+          "Next.js",
+          "gRPC",
+          "TypeORM",
+          "Monorepo",
+          "Azure AKS",
+          "Azure DB for MySQL",
+          "Azure Blob Storage",
+          "NATS",
+          "Redis",
+          "GitHub Actions",
+          "Java Spring Boot (legacy)",
+          "PHP (legacy)",
         ],
       },
     ],

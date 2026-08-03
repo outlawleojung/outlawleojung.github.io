@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Project } from "@/lib/portfolio";
 import { ArchToggle } from "./ArchToggle";
 
@@ -23,6 +24,57 @@ export function ProjectCard({ project }: { project: Project }) {
           )}
         </div>
       </header>
+
+      {project.techDocs && project.techDocs.length > 0 && (
+        <div className="my-6 space-y-4">
+          {project.techDocs.map((doc) => {
+            const isInternal = doc.href.startsWith("/");
+            const inner = (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="rounded bg-[var(--accent)] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
+                    Tech Blog
+                  </span>
+                  <span className="font-mono text-xs text-[var(--muted)]">
+                    · 상세 설계 문서
+                  </span>
+                </div>
+                <h4 className="mt-3 text-lg font-bold leading-snug text-[var(--foreground)] group-hover:text-[var(--accent)] sm:text-xl">
+                  📖 {doc.label}
+                </h4>
+                {doc.note && (
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] sm:text-[15px]">
+                    {doc.note}
+                  </p>
+                )}
+                <div className="mt-4 flex items-center gap-2 font-mono text-sm font-semibold text-[var(--accent)]">
+                  <span>READ THE POST</span>
+                  <span className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </div>
+              </>
+            );
+            const className =
+              "group block overflow-hidden rounded-xl border-2 border-[var(--accent)] bg-gradient-to-br from-[var(--accent)]/15 via-[var(--accent)]/5 to-transparent p-6 shadow-lg transition hover:shadow-xl hover:from-[var(--accent)]/25 sm:p-8";
+            return isInternal ? (
+              <Link key={doc.href} href={doc.href} className={className}>
+                {inner}
+              </Link>
+            ) : (
+              <a
+                key={doc.href}
+                href={doc.href}
+                target="_blank"
+                rel="noreferrer"
+                className={className}
+              >
+                {inner}
+              </a>
+            );
+          })}
+        </div>
+      )}
 
       {project.heroImage && (
         <div className="my-6 flex justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
@@ -114,11 +166,17 @@ export function ProjectCard({ project }: { project: Project }) {
         <ArchToggle
           label={project.archImage.label}
           src={project.archImage.src}
+          defaultOpen={project.archImage.defaultOpen}
         />
       )}
 
       {project.archImages?.map((a) => (
-        <ArchToggle key={a.src} label={a.label} src={a.src} />
+        <ArchToggle
+          key={a.src}
+          label={a.label}
+          src={a.src}
+          defaultOpen={a.defaultOpen}
+        />
       ))}
 
       <div className="mt-6">

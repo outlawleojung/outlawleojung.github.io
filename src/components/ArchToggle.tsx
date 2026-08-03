@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 
-export function ArchToggle({ label, src }: { label: string; src: string }) {
-  const [open, setOpen] = useState(false);
+export function ArchToggle({
+  label,
+  src,
+  defaultOpen = false,
+}: {
+  label: string;
+  src: string;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="mt-4 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] print:break-inside-avoid">
       <button
@@ -35,7 +43,7 @@ export function ArchToggle({ label, src }: { label: string; src: string }) {
         <img
           src={src}
           alt={label}
-          className="mx-auto max-h-[600px] w-auto max-w-full print:max-h-none"
+          className="mx-auto w-full max-w-full print:max-h-none"
         />
       </div>
     </div>
