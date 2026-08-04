@@ -1,7 +1,7 @@
 ---
 title: "TypeORM QueryRunner를 커스텀 데코레이터로 트랜잭션 공통화하기"
 description: "서비스마다 반복되던 startTransaction / try-catch-finally 를 Interceptor + 파라미터 데코레이터 + BaseRepository 조합으로 걷어낸 방법. typeorm-transactional을 안 쓴 이유까지."
-date: "2026-08-04"
+date: "2026-03-20"
 tags: ["NestJS", "TypeORM", "Transaction", "Decorator", "Interceptor"]
 published: true
 ---
