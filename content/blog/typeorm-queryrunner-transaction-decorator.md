@@ -6,7 +6,7 @@ tags: ["NestJS", "TypeORM", "Transaction", "Decorator", "Interceptor"]
 published: true
 ---
 
-> 서비스마다 트랜잭션 뼈대 계속 다시 짜기 싫어서 공통화한 얘기.
+> 서비스마다 트랜잭션 뼈대를 계속 다시 짜는 게 싫어서 공통화했습니다. NestJS + TypeORM 환경에서 Interceptor · 파라미터 데코레이터 · BaseRepository 세 조각을 어떻게 엮었는지, `typeorm-transactional` 라이브러리를 왜 안 썼는지 정리합니다.
 
 ## 목차
 
@@ -24,9 +24,9 @@ published: true
 
 ## 1. 왜 만들었나
 
-일단 트랜잭션은 쓰기가 여러 개일 때 씀. SELECT 한 번, UPDATE 한 번짜리엔 필요 없음. DB가 알아서 auto-commit으로 처리해줌.
+트랜잭션은 쓰기가 여러 개일 때 씁니다. SELECT 한 번, UPDATE 한 번짜리에는 필요 없습니다. DB가 알아서 auto-commit으로 처리해줍니다.
 
-트랜잭션이 필요한 건 이런 경우. 관리자 비밀번호 바꾸면서 감사 로그 남기고, 기존 세션도 지워야 함.
+트랜잭션이 필요한 건 이런 경우입니다. 관리자 비밀번호를 바꾸면서 감사 로그를 남기고, 기존 세션도 지워야 합니다.
 
 ```typescript
 async resetAdminPassword(adminId: number, current: string, next: string) {
@@ -65,27 +65,27 @@ async resetAdminPassword(adminId: number, current: string, next: string) {
 }
 ```
 
-비번은 바뀌었는데 세션이 안 지워지면? 이전 비번으로 로그인한 세션이 그대로 살아있음. 감사 로그 빠지면 나중에 추적도 안 되고. 그래서 세 개를 묶어야 함.
+비번은 바뀌었는데 세션이 안 지워지면 이전 비번으로 로그인한 세션이 그대로 살아있습니다. 감사 로그가 빠지면 나중에 추적이 안 되고요. 그래서 세 개를 묶어야 합니다.
 
-근데 이걸 서비스마다 다시 짜야 한다는 게 문제. 로직 5줄 쓰려고 뼈대 15줄 붙임. 그리고 `release()` 한 번 빼먹으면 커넥션 반환이 안 되는데, 이게 당장은 티가 안 남. 서비스 뜨고 한참 지나서 커넥션 풀 다 차서 응답 밀리기 시작하는데, 이 시점부터 원인 잡으려면 꽤 고생함.
+문제는 이 코드를 서비스마다 다시 짜야 한다는 겁니다. 로직 5줄 쓰려고 뼈대 15줄이 붙습니다. `release()` 한 번 빼먹으면 커넥션 반환이 안 되는데, 당장은 티가 안 납니다. 서비스가 뜨고 한참 지나서 커넥션 풀이 다 차 응답이 밀리기 시작할 때가 되어야 드러나고, 이 시점부터 원인 잡으려면 꽤 고생합니다.
 
-무엇보다 트랜잭션 열고 닫는 건 서비스가 할 일이 아님. 요청 시작할 때 열고 끝날 때 닫는 거니까 요청 경계에서 해야 함.
+무엇보다 트랜잭션 열고 닫는 건 서비스가 할 일이 아닙니다. 요청 시작할 때 열고 끝날 때 닫는 거니까 요청 경계에서 처리해야 합니다.
 
 ---
 
 ## 2. typeorm-transactional 두고 왜
 
-보통은 `typeorm-transactional` 의 `@Transactional()` 씀. 서비스 메서드에 붙이면 알아서 감싸주고, 내부는 `AsyncLocalStorage` 로 컨텍스트 흘려보내는 방식.
+보통은 `typeorm-transactional` 의 `@Transactional()` 을 씁니다. 서비스 메서드에 붙이면 알아서 감싸주고, 내부에서는 `AsyncLocalStorage` 로 컨텍스트를 흘려보내는 방식입니다.
 
-편하긴 함. 근데 리포지토리 메서드만 딱 보면 지금 트랜잭션 안인지 밖인지 안 보임. 확인하려면 호출자 거슬러 올라가서 `@Transactional()` 어디 걸렸는지 찾아야 함. 별거 아닌 것 같아도 디버깅할 때 은근 발목 잡힘.
+편하긴 한데, 리포지토리 메서드만 딱 봤을 때 이게 지금 트랜잭션 안에서 도는지 밖에서 도는지 안 보입니다. 확인하려면 호출자를 거슬러 올라가서 `@Transactional()` 이 어디 걸렸는지 찾아야 합니다. 별거 아닌 것 같아도 디버깅할 때 은근 발목을 잡습니다.
 
-시그니처에 `queryRunner?: QueryRunner` 있으면 한 눈에 보임. 넘어왔으면 안, 안 넘어왔으면 밖. 인자 하나 늘어나는 대신 이걸 얻는 쪽이 지금 규모엔 맞다고 봄.
+시그니처에 `queryRunner?: QueryRunner` 가 있으면 한 눈에 보입니다. 넘어왔으면 안, 안 넘어왔으면 밖. 인자 하나 늘어나는 대신 이 명시성을 얻는 편이 지금 규모엔 맞다고 봤습니다.
 
 ---
 
 ## 3. 세 조각으로 자른 이유
 
-책임을 셋으로 나눔.
+책임을 셋으로 나눴습니다.
 
 ```
 [요청 진입]
@@ -103,9 +103,9 @@ async resetAdminPassword(adminId: number, current: string, next: string) {
 [DB]
 ```
 
-셋이 서로 최소한만 알게 하려고 했음. Interceptor는 라이프사이클만 앎. 데코레이터는 request에서 값 꺼내는 얇은 통로. BaseRepository는 QueryRunner 있냐 없냐만 봄.
+셋이 서로 최소한만 알게 하려고 했습니다. Interceptor는 라이프사이클만 알고, 데코레이터는 request에서 값 꺼내는 얇은 통로일 뿐이고, BaseRepository는 QueryRunner가 있느냐 없느냐만 봅니다.
 
-이렇게 잘라두면 나중에 마이크로서비스 컨텍스트 지원이 필요해져도 Interceptor만 갈아끼우면 되고, 배치 스크립트에선 그냥 QueryRunner 없이 리포지토리 쓰면 됨.
+이렇게 잘라두면 나중에 마이크로서비스 컨텍스트 지원이 필요해져도 Interceptor만 갈아끼우면 되고, 배치 스크립트에서는 그냥 QueryRunner 없이 리포지토리를 쓰면 됩니다.
 
 ---
 
@@ -146,13 +146,13 @@ export class TransactionInterceptor implements NestInterceptor {
 
 ### request 객체에 담은 이유
 
-컨텍스트 전달을 라이브러리 없이 풀어야 하는데, NestJS(Express)는 요청 하나당 request 객체 하나가 보장됨. 여기에 `queryRunner` 얹으면 같은 요청 안의 모든 코드가 같은 인스턴스 봄.
+컨텍스트 전달을 라이브러리 없이 풀어야 하는데, NestJS(Express)에서는 요청 하나당 request 객체 하나가 보장됩니다. 여기에 `queryRunner` 를 얹으면 같은 요청 안의 모든 코드가 같은 인스턴스를 봅니다.
 
-즉 AsyncLocalStorage 자리를 request 객체가 대신함. Express가 이미 해주는 걸 재활용하는 거라 별도 초기화도 없고, 컨텍스트가 어디 있는지도 뻔함. 그냥 request 안에.
+AsyncLocalStorage 자리를 request 객체가 대신하는 겁니다. Express가 이미 해주는 걸 재활용하는 거라 별도 초기화도 없고, 컨텍스트가 어디 있는지도 뻔합니다. 그냥 request 안에.
 
 ### commit / rollback / release 각자 감싼 이유
 
-디테일 하나. 세 동작을 각자 try-catch로 감쌈.
+디테일이 하나 있습니다. 세 동작을 각자 try-catch 로 감쌌습니다.
 
 ```typescript
 private async rollbackTransaction(qr: QueryRunner) {
@@ -184,19 +184,19 @@ private async releaseQueryRunner(qr: QueryRunner) {
 }
 ```
 
-두 개가 중요함.
+두 가지가 중요합니다.
 
-하나. release는 무조건 돌아야 함. 안 하면 커넥션 풀이 조금씩 새고, 나중에 원인 못 찾고 헤맴. 그래서 finally에 넣음.
+첫째, release 는 무조건 돌아야 합니다. 안 하면 커넥션 풀이 조금씩 새고, 나중에 원인 못 찾고 헤매게 됩니다. 그래서 finally 에 넣었습니다.
 
-둘. rollback이나 release가 실패했다고 새 예외 던지면 원래 에러가 가려짐. 유니크 위반으로 catchError에 들어왔는데 롤백에서 또 뭐가 터졌다고 그걸 던지면? 프론트는 엉뚱한 에러만 봄. 진짜 원인은 유니크 위반이었는데.
+둘째, rollback 이나 release 가 실패했다고 새 예외를 던지면 원래 에러가 가려집니다. 유니크 위반으로 catchError 에 들어왔는데 롤백에서 또 뭐가 터졌다고 그걸 던지면, 프론트는 엉뚱한 에러만 보게 됩니다. 진짜 원인은 유니크 위반이었는데.
 
-이걸 서비스마다 실수 없이 짜는 거 진짜 어려움. 한 번 짜서 재사용하는 것만으로도 뽕뽑음.
+이걸 서비스마다 실수 없이 짜는 건 진짜 어렵습니다. 한 번 짜서 재사용하는 것만으로도 값어치를 합니다.
 
 ---
 
 ## 5. @QueryRunner() 데코레이터
 
-Interceptor가 `req.queryRunner` 에 심어둔 걸 컨트롤러에서 꺼내야 함. 매번 `@Req() req` 받아서 `req.queryRunner` 꺼내기 싫었음. 의도도 안 드러나고 타입도 흐릿하고. 그래서 파라미터 데코레이터.
+Interceptor가 `req.queryRunner` 에 심어둔 걸 컨트롤러에서 꺼내야 합니다. 매번 `@Req() req` 받아서 `req.queryRunner` 접근하기가 싫었습니다. 의도도 안 드러나고 타입도 흐릿하고. 그래서 파라미터 데코레이터를 만들었습니다.
 
 ```typescript
 export const QueryRunner = createParamDecorator(
@@ -214,17 +214,17 @@ export const QueryRunner = createParamDecorator(
 );
 ```
 
-여기서 신경 쓴 건 하나. 없으면 조용히 undefined 넘기지 말고 그 자리에서 터트림. `@UseInterceptors(TransactionInterceptor)` 컨트롤러에 안 붙이는 실수 언젠가 무조건 남. 근데 undefined가 서비스 안까지 흘러가면 엉뚱한 데서 터지고, 그러면 원인 찾는 데 시간 다 씀.
+여기서 신경 쓴 건 하나. 없으면 조용히 undefined 를 넘기지 말고 그 자리에서 터트립니다. `@UseInterceptors(TransactionInterceptor)` 를 컨트롤러에 안 붙이는 실수가 언젠가는 무조건 나는데, undefined 가 서비스 안까지 흘러가면 엉뚱한 데서 터지고, 그러면 원인 찾는 데 시간을 다 씁니다.
 
-여기서 명확한 예외로 죽이면 로그 한 줄로 끝. Interceptor 안 붙였네, 붙이면 됨.
+여기서 명확한 예외로 죽이면 로그 한 줄로 끝납니다. Interceptor 안 붙였네, 붙이면 됩니다.
 
 ---
 
 ## 6. BaseRepository
 
-트랜잭션 걸린 요청에선 모든 쿼리가 같은 `QueryRunner.manager` 위에서 돌아야 그 트랜잭션에 들어감. 다른 매니저로 쿼리 날리면 auto-commit이라 롤백에서 빠짐.
+트랜잭션이 걸린 요청에서는 모든 쿼리가 같은 `QueryRunner.manager` 위에서 돌아야 그 트랜잭션에 들어갑니다. 다른 매니저로 쿼리를 날리면 auto-commit이라 롤백에서 빠집니다.
 
-이걸 리포지토리 계층에서 잡아주려고 함.
+이걸 리포지토리 계층에서 잡아주려고 합니다.
 
 ```typescript
 @Injectable()
@@ -248,9 +248,9 @@ export abstract class BaseRepository<T extends ObjectLiteral> {
 }
 ```
 
-`queryRunner` 를 옵션으로 뒀음.
+`queryRunner` 를 옵션으로 뒀습니다.
 
-넘어오면 트랜잭션 매니저 쪽 repo, 안 넘어오면 기본 repo. 덕분에 같은 메서드를 트랜잭션 안팎에서 다 씀. 배치 스크립트에서 대량 처리할 땐 건별로 auto-commit 돌리고 싶으니까 그럴 땐 인자 없이 부르면 됨.
+넘어오면 트랜잭션 매니저 쪽 repo, 안 넘어오면 기본 repo. 덕분에 같은 메서드를 트랜잭션 안팎에서 다 씁니다. 배치 스크립트에서 대량 처리할 땐 건별로 auto-commit 으로 돌리고 싶으니까, 그럴 땐 인자 없이 부르면 됩니다.
 
 ```typescript
 async updatePasswordWithAccount(
@@ -263,13 +263,13 @@ async updatePasswordWithAccount(
 }
 ```
 
-이 시그니처가 그대로 문서 역할. "이 메서드는 트랜잭션에 참여할 수도, 안 할 수도 있다." 주석 없어도 호출부에서 판단됨.
+이 시그니처가 그대로 문서 역할을 합니다. "이 메서드는 트랜잭션에 참여할 수도, 안 할 수도 있다." 주석 없어도 호출부에서 판단됩니다.
 
 ---
 
 ## 7. PG 에러코드 처리
 
-Interceptor의 catchError에서 하나 더 함. PostgreSQL 저수준 에러코드를 HTTP 예외로 바꿔주는 것.
+Interceptor의 catchError 에서 하나 더 합니다. PostgreSQL 저수준 에러코드를 HTTP 예외로 바꿔주는 것.
 
 ```typescript
 catchError(async (e: unknown) => {
@@ -290,15 +290,15 @@ catchError(async (e: unknown) => {
 });
 ```
 
-`23503` 은 외래키 위반, `23505` 는 유니크 위반. 트랜잭션 실패 중에 이 두 개가 압도적으로 많이 나옴. 서비스마다 try-catch로 잡아서 도메인 예외로 바꾸는 방법도 있는데, 그러면 또 뼈대가 서비스에 쌓임. 요청 경계에서 한 번에 끝내면 서비스는 자기 일만 하면 됨.
+`23503` 은 외래키 위반, `23505` 는 유니크 위반. 트랜잭션 실패 중에 이 두 개가 압도적으로 많이 나옵니다. 서비스마다 try-catch 로 잡아서 도메인 예외로 바꾸는 방법도 있는데, 그러면 또 뼈대 코드가 서비스에 쌓입니다. 요청 경계에서 한 번에 끝내면 서비스는 자기 일만 하면 됩니다.
 
-물론 도메인 규칙상 특정 위반을 다르게 처리해야 하는 경우 — 회원가입 이메일 중복은 `409` 말고 별도 코드로 응답한다든가 — 그런 건 서비스에서 명시적으로 잡아서 던지면 됨. Interceptor에서 하는 건 폴백. 명시적으로 처리 안 한 것들은 여기서 최소한 말 되는 응답으로 바꿔줌.
+물론 도메인 규칙상 특정 위반을 다르게 처리해야 하는 경우 — 회원가입 이메일 중복은 `409` 말고 별도 코드로 응답한다든가 — 그런 건 서비스에서 명시적으로 잡아 던지면 됩니다. Interceptor 에서 하는 처리는 폴백입니다. 명시적으로 처리 안 한 것들은 여기서 최소한 말 되는 응답으로 바꿔줍니다.
 
 ---
 
 ## 8. 실제 흐름
 
-세 조각이 어떻게 맞물리는지 요청 하나로 봄.
+세 조각이 어떻게 맞물리는지 요청 하나로 봅니다.
 
 ```typescript
 // Controller
@@ -343,13 +343,13 @@ async findById(id: number, queryRunner?: QueryRunner) {
 요청 진입
   → Interceptor가 QueryRunner 열고 req에 심음
   → Controller가 @QueryRunner()로 꺼내 서비스에 넘김
-  → Service가 여러 Repository에 같은 queryRunner 계속 넘김
+  → Service가 여러 Repository에 같은 queryRunner를 계속 넘김
   → Repository가 getRepository(qr)로 트랜잭션 매니저 위에서 실행
   → 리턴
   → Interceptor의 tap이 commit + release
 ```
 
-중간에 예외 나면:
+중간에 예외가 나면:
 
 ```
 예외 발생
@@ -359,28 +359,28 @@ async findById(id: number, queryRunner?: QueryRunner) {
   → 아니면 원본 그대로 throw
 ```
 
-요청 하나 = 트랜잭션 하나. 이 규칙이 서비스 코드 어디에도 안 적혀 있는데 그냥 지켜짐. 서비스 어디에도 `startTransaction / commit / rollback / release` 가 없음. 이게 이 구조로 얻은 가장 큰 소득.
+요청 하나 = 트랜잭션 하나. 이 규칙이 서비스 코드 어디에도 안 적혀 있는데 그냥 지켜집니다. 서비스 어디에도 `startTransaction / commit / rollback / release` 가 없습니다. 이게 이 구조로 얻은 가장 큰 소득입니다.
 
 ---
 
 ## 9. 한계
 
-지금 규모에선 잘 굴러가는데 몇 가지는 알고 있어야 함.
+지금 규모에선 잘 굴러가는데 몇 가지는 알고 있어야 합니다.
 
-**HTTP 컨텍스트 전용.** Interceptor가 `switchToHttp()` 를 씀. `@nestjs/microservices` 의 RPC/이벤트 핸들러는 request 개념이 달라서 그대로는 안 돌아감. RPC 핸들러에도 트랜잭션 필요해지면 Interceptor를 컨텍스트별로 분기하거나 AsyncLocalStorage 같은 별도 그릇 붙여야 함.
+**HTTP 컨텍스트 전용.** Interceptor 가 `switchToHttp()` 를 씁니다. `@nestjs/microservices` 의 RPC/이벤트 핸들러는 request 개념이 달라서 그대로는 안 돌아갑니다. RPC 핸들러에도 트랜잭션이 필요해지면 Interceptor 를 컨텍스트별로 분기하거나 AsyncLocalStorage 같은 별도 그릇을 붙여야 합니다.
 
-사실 MSA 컨텍스트에서 트랜잭션은 좀 다른 문제이기도 함. 서비스 경계 넘는 순간 로컬 트랜잭션이 아니라 Saga랑 Outbox 영역. 이건 이전 글 [MSA 데이터 정합성 확보 설계 노트](/blog/msa-data-consistency/) 에서 정리했음.
+사실 MSA 컨텍스트에서 트랜잭션은 좀 다른 문제이기도 합니다. 서비스 경계를 넘는 순간 로컬 트랜잭션이 아니라 Saga 랑 Outbox 영역입니다. 이건 이후 글 [MSA 데이터 정합성 확보 설계 노트](/blog/msa-data-consistency/) 에서 정리했습니다.
 
-**중첩 트랜잭션 안 됨.** 같은 요청에서 트랜잭션 또 여는 건 지원 안 함. 근데 이게 오히려 이 구조를 단순하게 만드는 규칙이라 SAVEPOINT 까지 지원한다고 복잡도 늘리진 않음. 부분 롤백 정말 필요해지면 그때 가서 `BaseRepository` 에 별도 API 파는 게 나음.
+**중첩 트랜잭션 안 됨.** 같은 요청에서 트랜잭션을 또 여는 건 지원 안 합니다. 이게 오히려 이 구조를 단순하게 만드는 규칙이라 SAVEPOINT 까지 지원한다고 복잡도를 늘리진 않았습니다. 부분 롤백이 정말 필요해지면 그때 가서 `BaseRepository` 에 별도 API 를 파는 편이 낫습니다.
 
-**Interceptor 붙이는 걸 까먹을 수 있음.** `@UseInterceptors(TransactionInterceptor)` 안 붙이면 `@QueryRunner()` 가 런타임에 터짐. 바로 발견되긴 하는데 컴파일 타임에 잡히진 않음. 컨트롤러가 지금은 관리 가능한 수준이라 명시적으로 붙이고 있는데 더 커지면:
+**Interceptor 붙이는 걸 까먹을 수 있음.** `@UseInterceptors(TransactionInterceptor)` 를 안 붙이면 `@QueryRunner()` 가 런타임에 터집니다. 바로 발견되긴 하는데 컴파일 타임에 잡히진 않습니다. 컨트롤러가 지금은 관리 가능한 수준이라 명시적으로 붙이고 있는데, 더 커지면:
 
-- 글로벌 Interceptor로 바꾸고 `@SkipTransaction()` opt-out 두거나
-- `@QueryRunner()` 있는데 `@UseInterceptors(TransactionInterceptor)` 없으면 에러 내는 lint 규칙 짜거나
+- 글로벌 Interceptor 로 바꾸고 `@SkipTransaction()` opt-out 을 두거나
+- `@QueryRunner()` 있는데 `@UseInterceptors(TransactionInterceptor)` 없으면 에러 내는 lint 규칙을 짜거나
 
-정도가 자연스러운 다음.
+정도가 자연스러운 다음입니다.
 
-**Outbox 패턴이랑 잘 붙음.** 이건 얻은 점. 이벤트 발행을 같은 트랜잭션에 묶어야 할 때 `OutboxEvent` 도 같은 `queryRunner` 로 저장하면 끝.
+**Outbox 패턴이랑 잘 붙음.** 이건 얻은 점입니다. 이벤트 발행을 같은 트랜잭션에 묶어야 할 때 `OutboxEvent` 도 같은 `queryRunner` 로 저장하면 끝입니다.
 
 ```typescript
 async createOrder(dto: CreateOrderDto, queryRunner: QueryRunner) {
@@ -393,14 +393,14 @@ async createOrder(dto: CreateOrderDto, queryRunner: QueryRunner) {
 }
 ```
 
-`queryRunner` 가 인자로 흐르니까 이 두 INSERT 가 같은 트랜잭션이라는 게 코드에 그대로 보임. 이중 쓰기(dual write) 문제 예방엔 이 명시성이 정말 도움됨.
+`queryRunner` 가 인자로 흐르니까 이 두 INSERT 가 같은 트랜잭션이라는 게 코드에 그대로 보입니다. 이중 쓰기(dual write) 문제 예방에는 이 명시성이 정말 도움이 됩니다.
 
 ---
 
 ## 마치며
 
-이 구조로 얻은 건 두 개. 반복되던 뼈대 걷어낸 거, 그리고 트랜잭션 참여 여부가 함수 시그니처에 그대로 보이는 거.
+이 구조로 얻은 건 두 가지입니다. 반복되던 뼈대를 걷어낸 것, 그리고 트랜잭션 참여 여부가 함수 시그니처에 그대로 보이는 것.
 
-라이브러리 안 쓴 이유도 결국 두 번째 때문. 호출 흐름이 코드에 다 보이게 하고 싶었음. 팀이 크지 않고 트랜잭션 흐름 명확히 통제해야 하는 시점엔 편의보다 이 명시성이 더 값짐.
+라이브러리를 안 쓴 이유도 결국 두 번째 때문입니다. 호출 흐름이 코드에 다 보이게 하고 싶었습니다. 팀이 크지 않고 트랜잭션 흐름을 명확히 통제해야 하는 시점엔 편의보다 이 명시성이 더 값집니다.
 
-물론 지금 판단이 그렇다는 거고, 서비스 커지고 QueryRunner 넘겨야 하는 계층이 계속 늘어나면 그때 다시 볼 문제.
+물론 지금 판단이 그렇다는 거고, 서비스가 커지고 QueryRunner 를 넘겨야 하는 계층이 계속 늘어나면 그때 다시 볼 문제입니다.
