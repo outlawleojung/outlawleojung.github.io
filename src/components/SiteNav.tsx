@@ -13,13 +13,15 @@ export function SiteNav() {
   const pathname = usePathname() ?? "/";
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/85 backdrop-blur print:hidden">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-3">
-        <Link
-          href="/"
-          className="font-mono text-sm font-semibold tracking-tight text-[var(--foreground)] hover:text-[var(--accent)]"
-        >
-          outlawleojung
+    <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur print:hidden">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
+        <Link href="/" className="group flex items-baseline gap-2">
+          <span className="text-lg font-bold tracking-tight text-[var(--foreground)] group-hover:text-[var(--accent)] sm:text-xl">
+            정민영
+          </span>
+          <span className="hidden font-mono text-xs text-[var(--muted)] sm:inline">
+            Jung Min-Young
+          </span>
         </Link>
         <ul className="flex items-center gap-1 sm:gap-2">
           {NAV_ITEMS.map((item) => {
@@ -28,13 +30,19 @@ export function SiteNav() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                  className={`relative inline-flex items-center px-3 py-2 text-[15px] transition sm:px-4 ${
                     active
-                      ? "bg-[var(--accent)]/15 text-[var(--accent)]"
-                      : "text-[var(--muted)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"
+                      ? "font-semibold text-[var(--accent)]"
+                      : "font-medium text-[var(--foreground)]/75 hover:text-[var(--foreground)]"
                   }`}
                 >
                   {item.label}
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-3 -bottom-[13px] h-[2px] rounded-full bg-[var(--accent)]"
+                    />
+                  )}
                 </Link>
               </li>
             );

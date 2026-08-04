@@ -1,5 +1,6 @@
 import type { Company } from "@/lib/portfolio";
 import { ProjectCard } from "./ProjectCard";
+import { projectAnchorId } from "@/lib/portfolio-utils";
 
 export function CompanySection({ company }: { company: Company }) {
   return (
@@ -23,7 +24,11 @@ export function CompanySection({ company }: { company: Company }) {
       </div>
       <div className="space-y-6">
         {company.projects.map((p) => (
-          <ProjectCard key={p.name} project={p} />
+          <ProjectCard
+            key={p.name}
+            project={p}
+            anchorId={projectAnchorId(company, p)}
+          />
         ))}
       </div>
     </section>

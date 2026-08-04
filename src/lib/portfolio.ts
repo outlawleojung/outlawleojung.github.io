@@ -26,10 +26,26 @@ export const profile = {
   name: "정민영",
   title: "시니어 백엔드 엔지니어 / 테크 리드",
   years: 13,
+  since: 2013,
+  status: "이직 검토 중",
+  headline:
+    "13년차 백엔드 · 팀 리드. 힐링샘 레거시 3종 서비스를 NestJS + gRPC MSA 로 전환 중.",
+  subheadline:
+    "최근에는 FastAPI + Claude API + pgvector 기반 RAG 챗봇도 함께 개발하고 있습니다.",
   summary:
     "레거시 시스템을 분석하고 백엔드 아키텍처, 클라우드 인프라, 배포 환경까지 재설계해 왔습니다. 실시간 채팅·상태 동기화 시스템, MSA 아키텍처 설계, 레거시 현대화를 축으로 NestJS · gRPC · Socket.IO · NATS · Redis · Kubernetes 환경에서 서비스를 만들어왔습니다.",
+  keywords: [
+    "13년 경력",
+    "Tech Lead",
+    "MSA · gRPC",
+    "NestJS",
+    "Realtime",
+    "Azure AKS",
+    "RAG · LLM",
+  ],
   email: "outlawleojung@gmail.com",
   github: "https://github.com/outlawleojung",
+  githubHandle: "outlawleojung",
 };
 
 export const skills = {
@@ -48,6 +64,68 @@ export const skills = {
     "Docker",
   ],
 };
+
+export type SkillDomain = {
+  label: string;
+  description?: string;
+  items: string[];
+};
+
+export const skillDomains: SkillDomain[] = [
+  {
+    label: "Backend Core",
+    description: "서버 프레임워크 · 언어 · 통신 프로토콜",
+    items: ["NestJS", "TypeScript", "Express", "FastAPI", "Python", "gRPC", "REST"],
+  },
+  {
+    label: "Realtime · Messaging",
+    description: "실시간 통신 · 메시지 브로커 · 세션 처리",
+    items: ["Socket.IO", "NATS", "Redis"],
+  },
+  {
+    label: "Data",
+    description: "관계형 · NoSQL · 벡터 · 캐시",
+    items: [
+      "MySQL",
+      "PostgreSQL",
+      "pgvector",
+      "MongoDB",
+      "MSSQL",
+      "MariaDB",
+      "Azure CosmosDB",
+      "TypeORM",
+      "SQLAlchemy",
+    ],
+  },
+  {
+    label: "Cloud · DevOps",
+    description: "인프라 · 컨테이너 · CI/CD",
+    items: [
+      "Azure AKS",
+      "Azure DB for MySQL",
+      "Azure Blob Storage",
+      "Kubernetes",
+      "Docker",
+      "GitHub Actions",
+      "Azure DevOps",
+    ],
+  },
+  {
+    label: "Frontend · Mobile",
+    description: "서버 개발과 함께 다뤄본 클라이언트 스택",
+    items: ["Next.js", "React", "Flutter", "Dart", "cocos2d-x"],
+  },
+  {
+    label: "AI · LLM",
+    description: "최근 도입한 LLM · RAG 스택",
+    items: ["Anthropic Claude", "Voyage AI", "RAG"],
+  },
+  {
+    label: "Legacy",
+    description: "레거시 유지·전환 대상으로 다룬 스택",
+    items: ["C++", "C#", "ACE lib", "PHP (그누보드/영카트)", "Java Spring Boot"],
+  },
+];
 
 export const companies: Company[] = [
   {
@@ -122,6 +200,13 @@ export const companies: Company[] = [
             label: "데이터 정합성 전략 (설계 · 검토) · Outbox · Saga · Idempotency · Reconciliation",
             src: "/images/healingsam/03_data_strategy.png",
             defaultOpen: true,
+          },
+        ],
+        techDocs: [
+          {
+            label: "MSA 데이터 정합성 확보 설계 노트",
+            href: "/blog/msa-data-consistency/",
+            note: "동시성 · 멱등성 · Redis 락 · NATS · Outbox · Saga 를 하나의 흐름으로 정리한 설계 문서.",
           },
         ],
         stack: [

@@ -9,11 +9,20 @@ export type PostMeta = {
   date: string;
   tags: string[];
   published: boolean;
+  readingMinutes: number;
 };
 
 export type Post = PostMeta & {
   content: string;
 };
+
+function estimateReadingMinutes(content: string): number {
+  const cleaned = content.replace(/```[\s\S]*?```/g, " ").replace(/`[^`]*`/g, " ");
+  const cjk = (cleaned.match(/[ㄱ-힝一-鿿぀-ヿ]/g) ?? []).length;
+  const words = (cleaned.match(/[A-Za-z0-9]+/g) ?? []).length;
+  const minutes = Math.ceil(cjk / 500 + words / 200);
+  return Math.max(1, minutes);
+}
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -28,6 +37,7 @@ function parseFile(filename: string): Post {
     date: String(data.date ?? ""),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     published: data.published !== false,
+    readingMinutes: estimateReadingMinutes(content),
     content,
   };
 }

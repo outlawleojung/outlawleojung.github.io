@@ -2,9 +2,18 @@ import Link from "next/link";
 import type { Project } from "@/lib/portfolio";
 import { ArchToggle } from "./ArchToggle";
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({
+  project,
+  anchorId,
+}: {
+  project: Project;
+  anchorId?: string;
+}) {
   return (
-    <article className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8">
+    <article
+      id={anchorId}
+      className="scroll-mt-24 rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8"
+    >
       <header className="mb-4">
         <h3 className="text-xl font-semibold sm:text-2xl">{project.name}</h3>
         <p className="mt-2 text-sm text-[var(--muted)]">{project.tagline}</p>
@@ -25,56 +34,6 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
       </header>
 
-      {project.techDocs && project.techDocs.length > 0 && (
-        <div className="my-6 space-y-4">
-          {project.techDocs.map((doc) => {
-            const isInternal = doc.href.startsWith("/");
-            const inner = (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="rounded bg-[var(--accent)] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
-                    Tech Blog
-                  </span>
-                  <span className="font-mono text-xs text-[var(--muted)]">
-                    · 상세 설계 문서
-                  </span>
-                </div>
-                <h4 className="mt-3 text-lg font-bold leading-snug text-[var(--foreground)] group-hover:text-[var(--accent)] sm:text-xl">
-                  📖 {doc.label}
-                </h4>
-                {doc.note && (
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted)] sm:text-[15px]">
-                    {doc.note}
-                  </p>
-                )}
-                <div className="mt-4 flex items-center gap-2 font-mono text-sm font-semibold text-[var(--accent)]">
-                  <span>READ THE POST</span>
-                  <span className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
-                </div>
-              </>
-            );
-            const className =
-              "group block overflow-hidden rounded-xl border-2 border-[var(--accent)] bg-gradient-to-br from-[var(--accent)]/15 via-[var(--accent)]/5 to-transparent p-6 shadow-lg transition hover:shadow-xl hover:from-[var(--accent)]/25 sm:p-8";
-            return isInternal ? (
-              <Link key={doc.href} href={doc.href} className={className}>
-                {inner}
-              </Link>
-            ) : (
-              <a
-                key={doc.href}
-                href={doc.href}
-                target="_blank"
-                rel="noreferrer"
-                className={className}
-              >
-                {inner}
-              </a>
-            );
-          })}
-        </div>
-      )}
 
       {project.heroImage && (
         <div className="my-6 flex justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)]">
@@ -194,6 +153,48 @@ export function ProjectCard({ project }: { project: Project }) {
           ))}
         </div>
       </div>
+
+      {project.techDocs && project.techDocs.length > 0 && (
+        <div className="mt-6 border-t border-[var(--border)] pt-4">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">
+            관련 노트
+          </p>
+          <ul className="space-y-1.5">
+            {project.techDocs.map((doc) => {
+              const isInternal = doc.href.startsWith("/");
+              const label = (
+                <span className="group inline-flex items-baseline gap-1.5">
+                  <span className="text-[var(--foreground)] transition group-hover:text-[var(--accent)]">
+                    {doc.label}
+                  </span>
+                  <span className="text-[var(--muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--accent)]">
+                    →
+                  </span>
+                </span>
+              );
+              return (
+                <li
+                  key={doc.href}
+                  className="text-sm leading-snug sm:text-[15px]"
+                >
+                  {isInternal ? (
+                    <Link href={doc.href}>{label}</Link>
+                  ) : (
+                    <a href={doc.href} target="_blank" rel="noreferrer">
+                      {label}
+                    </a>
+                  )}
+                  {doc.note && (
+                    <p className="mt-0.5 text-xs leading-relaxed text-[var(--muted)] sm:text-[13px]">
+                      {doc.note}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </article>
   );
 }
