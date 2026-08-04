@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/", label: "Portfolio", match: (p: string) => p === "/" },
-  { href: "/blog/", label: "Blog", match: (p: string) => p.startsWith("/blog") },
   { href: "/about/", label: "About", match: (p: string) => p.startsWith("/about") },
+  { href: "/blog/", label: "Blog", match: (p: string) => p.startsWith("/blog") },
 ];
 
 export function SiteNav() {

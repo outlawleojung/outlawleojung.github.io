@@ -24,8 +24,8 @@ export function Hero() {
         <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl">
           {profile.name}
         </h1>
-        <p className="mt-3 text-lg text-[var(--muted)] sm:text-xl">
-          {profile.title} · {profile.since}–{new Date().getFullYear()}
+        <p className="mt-3 font-mono text-sm tracking-wide text-[var(--muted)] sm:text-base">
+          Backend · Realtime · MSA · Cloud
         </p>
 
         <p className="mt-6 max-w-2xl text-xl font-medium leading-[1.5] text-[var(--foreground)] sm:text-2xl">

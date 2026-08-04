@@ -61,19 +61,27 @@ export default function AboutPage() {
     <main className="mx-auto max-w-3xl px-6 py-16 print:px-6 print:py-4">
       <AboutToolbar />
 
-      <header className="mb-10 border-b border-[var(--border)] pb-6 print:mb-4 print:pb-3">
-        <p className="font-mono text-xs tracking-widest text-[var(--muted)] print:text-[9px]">
-          COVER LETTER · 자기소개서
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl print:text-xl">
-          {profile.name}
-        </h1>
-        <p className="mt-2 text-sm text-[var(--muted)] print:text-[11px]">
-          {profile.title} · {profile.years}년차
-        </p>
-        <div className="mt-3 flex flex-wrap gap-x-4 text-xs text-[var(--muted)] print:text-[10px]">
-          <span>{profile.email}</span>
-          <span>{profile.github}</span>
+      <header className="mb-10 flex items-start gap-6 border-b border-[var(--border)] pb-6 print:mb-4 print:pb-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/profile.jpg"
+          alt={`${profile.name} profile`}
+          className="h-28 w-28 shrink-0 rounded-full object-cover grayscale ring-1 ring-[var(--border)] sm:h-32 sm:w-32 print:grayscale-0"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="font-mono text-xs tracking-widest text-[var(--muted)] print:text-[9px]">
+            COVER LETTER · 자기소개서
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl print:text-xl">
+            {profile.name}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--muted)] print:text-[11px]">
+            {profile.title} · {profile.years}년차
+          </p>
+          <div className="mt-3 flex flex-wrap gap-x-4 text-xs text-[var(--muted)] print:text-[10px]">
+            <span>{profile.email}</span>
+            <span>{profile.github}</span>
+          </div>
         </div>
       </header>
 
