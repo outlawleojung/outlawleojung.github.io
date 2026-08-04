@@ -83,29 +83,61 @@ HTTP 메서드로 보면:
 
 **핵심: "확인 후 삽입"이 아니라 "삽입 시도 후 충돌 처리"**
 
+먼저 자연스럽게 떠오르는 방식부터 봅니다.
+
 ```typescript
-// ❌ 잘못된 방식 — 레이스 컨디션 발생
+// ❌ 위험한 방식
 const exists = await db.findOne({ eventId });
 if (!exists) {
-  await db.insert({ eventId }); // 두 인스턴스가 동시에 여기 도달 가능
+  await processEvent(event);       // 결제 처리
+  await db.insert({ eventId });    // 처리 끝났으니 기록
+}
+```
+
+"처리에 성공한 것만 표시하자"는 사고 흐름 때문에 이 순서를 자주 씁니다. 그런데 인스턴스 A, B 가 이벤트를 동시에 받으면 이렇게 됩니다.
+
+```
+시각    인스턴스 A                인스턴스 B
+─────────────────────────────────────────────
+t1     findOne → 없음
+t2                              findOne → 없음
+t3     processEvent (결제)
+t4                              processEvent (결제)   ← 결제 2번!
+t5     insert eventId (성공)
+t6                              insert eventId (실패)  ← 이때 막아봐야 늦음
+```
+
+DB 유니크 제약이 두 번째 INSERT는 막아주지만, 그 시점엔 이미 결제가 두 번 일어난 뒤입니다. **DB 가 뭘 막아주기 전에 부수효과가 먼저 실행되는 게 문제입니다.**
+
+그럼 순서를 뒤집어서 INSERT를 먼저 해도 되지 않냐 할 수 있는데, 그것도 아슬아슬합니다.
+
+```typescript
+// △ 아슬아슬한 방식
+const exists = await db.findOne({ eventId });
+if (!exists) {
+  await db.insert({ eventId });    // ← 여기서 두 번째 놈이 유니크 위반으로 throw
   await processEvent(event);
 }
+```
 
-// ✅ 올바른 방식 — INSERT 먼저 시도
+이 코드는 실제로 이중 처리가 안 나긴 합니다. 두 번째 INSERT 가 예외를 던지고, 그 예외 때문에 processEvent 까지 안 갑니다. 그런데 **개발자 머릿속 모델과 실제 안전장치가 어긋난 상태**입니다. 개발자는 "내가 findOne 으로 체크했으니 안전하다"고 생각하는데, 실제로 안전하게 만들어주는 건 findOne 이 아니라 INSERT 실패 예외입니다. 만약 예외가 위로 안 던져지도록 감싼 코드가 있거나, 나중에 누가 findOne 만 믿고 순서를 바꾸는 순간 바로 위의 "위험한 방식"이 됩니다.
+
+그래서 findOne 은 아예 빼고, **INSERT 시도 자체를 체크로 삼는** 방식이 안전합니다.
+
+```typescript
+// ✅ 올바른 방식 — INSERT 시도가 곧 체크
 try {
-  await db.insert({ eventId }); // 유니크 제약이 걸려 있으므로 하나만 성공
-  await processEvent(event);
+  await db.insert({ eventId });    // 유니크 제약이 걸려 있으므로 하나만 성공
+  await processEvent(event);       // INSERT 성공한 인스턴스만 여기로
 } catch (e) {
   if (e instanceof UniqueConstraintViolation) {
-    return; // 이미 처리된 이벤트
+    return;                        // 이미 처리된 이벤트
   }
   throw e;
 }
 ```
 
-**"확인 후 삽입"이 위험한 이유:** 두 인스턴스가 동시에 `findOne`을 실행하면 둘 다 "없다"고 판단합니다. 그러면 둘 다 INSERT를 시도하고, 둘 다 처리를 진행합니다. 이것이 **레이스 컨디션(Race Condition)** 입니다.
-
-"삽입 시도 후 충돌 처리"에서는 DB의 유니크 제약이 물리적으로 하나만 성공하게 보장하므로 레이스 컨디션이 원천 차단됩니다.
+이 방식은 실제 안전장치(유니크 제약)가 코드의 첫 줄에 그대로 드러납니다. 순서를 바꿀 수도 없고(processEvent 가 INSERT 성공 뒤에만 실행), 개발자 머릿속 모델과 실제 방어선이 일치합니다.
 
 ### 처리와 멱등키 저장은 하나의 트랜잭션으로 묶는다
 
